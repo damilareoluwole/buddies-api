@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::prefix('interests')->group(function () {
+    Route::get('/', [InterestController::class, 'index'])->name('interests.index');
+});
+
 Route::prefix('auth')->group(function () {
     Route::prefix('register')->group(function () {
         Route::post('/', [AuthController::class, 'register'])->name('jwt-auth.register');
@@ -28,10 +32,6 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::prefix('interests')->group(function () {
-        Route::get('/', [InterestController::class, 'index'])->name('interests.index');
-    });
-
     Route::prefix('user')->group(function () {
         Route::prefix('profile')->group(function () {
             Route::get('/', [ProfileController::class, 'index'])->name('user.profile');
