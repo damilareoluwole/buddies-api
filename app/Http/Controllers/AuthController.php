@@ -21,80 +21,69 @@ class AuthController extends Controller
 {
     public function register(RegisterRequest $request)
     {
-        DB::beginTransaction();
+        $user = User::updateOrCreate(
+            [
+                'phone' => $request->phone,
+                'email' => $request->email,
+            ],
+            [
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'onboardingInitiate' => 1,
+                'password' => Hash::make($request->password)
+            ]
+        );
 
-        try {
-            $user = User::updateOrCreate(
-                [
-                    'phone' => $request->phone,
-                    'email' => $request->email,
-                ],
-                [
-                    'name' => $request->name,
-                    'phone' => $request->phone,
-                    'email' => $request->email,
-                    'onboardingInitiate' => 1,
-                    'password' => Hash::make($request->password)
-                ]
-            );
-
-            if(! $user) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Unable to complete your registration request.',
-                    'data' => []
-                    ]);
-            }
-
-            $this->recordUserInterests($user->id, $request->interests);
-            OtpJob::dispatch($user);
-
-            DB::commit();
-
+        if(! $user) {
             return response()->json([
-                'status' => true,
-                'message' => 'Enter the OTP sent to your phone.',
-                'data' => ['user' => UserResource::make($user)]
+                'status' => false,
+                'message' => 'Unable to complete your registration request.',
+                'data' => []
                 ]);
-
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::channel('registration_error')->info($e);
-            return response()->json(['status' => false, 'message' => 'Unable to complete this request.', 'data' => []], Response::HTTP_BAD_REQUEST);
         }
+
+        $this->recordUserInterests($user->id, $request->interests);
+        OtpJob::dispatch($user);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Enter the OTP sent to your phone.',
+            'data' => ['user' => UserResource::make($user)]
+            ]);
     }
 
-    protected function recordUserInterests(int $user_id, array $interests)
+    protected function recordUserInterests(int $user_id, $interests)
     {
-        $data = array();
-
         foreach ($interests as $interest) {
-            $data[] = ['user_id' => $user_id, 'interest_id' => $interest];
+            UserInterest::updateOrCreate([
+                'user_id' => $user_id, 
+                'interest_id' => $interest
+            ], 
+            [
+                'user_id' => $user_id, 
+                'interest_id' => $interest
+            ]);
         }
-
-        UserInterest::updateOrCreate($data, $data);
 
         return true;
     }
 
     public function activate(ValidateOtpRequest $request)
     {
-        try {
-            $user = User::find($request->userId);
+        $user = User::find($request->userId);
 
-            if ($user->otp != $request->otp)
-                return response()->json(['status' => false, 'message' => 'Invalid OTP', 'data' => []], Response::HTTP_BAD_REQUEST);
-
-            $user->verified_at = now();
-            $user->onboardingOtp = 1;
-            $user->otp = null;
-            $user->save();
-
-            return response()->json(['status' => true, 'message' => 'Account activated successfully.', 'data' => ['user' => UserResource::make($user)]]);
-        } catch(Exception $e) {
-            Log::channel('registration_error')->info($e);
-            return response()->json(['status' => false, 'message' => 'Unable to complete this request.'], Response::HTTP_BAD_REQUEST);
+        if ($user->otp != $request->otp) {
+            return response()->json(['status' => false, 'message' => 'Invalid OTP', 'data' => []], Response::HTTP_BAD_REQUEST);
         }
+
+        $user->verified_at = now();
+        $user->onboardingOtp = 1;
+        $user->otp = null;
+        $user->save();
+
+        return response()->json(['status' => true, 'message' => 'Account activated successfully.', 'data' => ['user' => UserResource::make($user)]]);
+        
     }
 
     public function resendOtp(ResendOtpRequest $request)
@@ -141,7 +130,7 @@ class AuthController extends Controller
             return response()->json(
                 [
                     'status' => false,
-                    'message' => 'Unable to complete login request. Check your credentials and try again.',
+                    'message' => 'Invalid login details. Check your credentials and try again.',
                     'data' => []
                 ],
                 Response::HTTP_UNAUTHORIZED

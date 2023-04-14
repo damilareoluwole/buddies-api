@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ProfileEditOtpRequest extends FormRequest
+class ChangePhoneOtpRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,10 @@ class ProfileEditOtpRequest extends FormRequest
     public function rules()
     {
         return [
-            'otp' => ['required', 'digits:4']
+            'phone' => [
+                'required',
+                'min:11'
+            ]
         ];
     }
 }

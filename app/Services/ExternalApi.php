@@ -76,12 +76,7 @@ class ExternalApi
     }
 
     public function process()
-    {
-        Log::info('Headers');
-        Log::info(json_encode($this->totalHeaders()));
-        Log::info('Body');
-        Log::info(json_encode($this->body));
-        
+    {        
         $client = new Client([
             'base_uri' => $this->url,
             'headers' => $this->totalHeaders()

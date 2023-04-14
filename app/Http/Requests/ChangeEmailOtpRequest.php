@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ChangePasswordRequest extends FormRequest
+class ChangeEmailOtpRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,13 +24,14 @@ class ChangePasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'password' => [
+            'email' => [
                 'required',
-                'min:6',
-                'confirmed'
+                'email:dns'
+            ],
+            'otp' => [
+                'required',
+                'digits:4'
             ]
         ];
     }
 }
-
-//password_confirmation

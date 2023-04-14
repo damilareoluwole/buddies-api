@@ -25,7 +25,7 @@ class UserResource extends JsonResource
             'onboardingInitiate' => $this->onboardingInitiate,
             'onboardingOtp' => $this->onboardingOtp,
             'onboardingPrivacy' => $this->onboardingPrivacy,
-            'interest' => $this->interests,
+            'interest' => InterestsResource::collection($this->interests),
         ];
     }
 }

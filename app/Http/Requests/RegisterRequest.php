@@ -26,7 +26,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => ['required','string'],
-            'phone' => ['required', 
+            'phone' => ['required',
                 'regex:/\+?[0-9]{11}/',
                 function ($attribute, $value, $fail) {
                     $user = User::where('phone', $value)
@@ -38,7 +38,7 @@ class RegisterRequest extends FormRequest
                 }
             ],
             'email' => [
-                'email', 
+                'email',
                 'required',
                 function ($attribute, $value, $fail) {
                     $user = User::where('email', $value)
@@ -49,10 +49,10 @@ class RegisterRequest extends FormRequest
                     }
                 }
             ],
-            'password' => ['required', 'string', 'min:6'],
-            'interests' => ['required|array'],
-            'interests.*' => ['integer|exists:users,id'],
-            
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'interests' => ['required', 'array'],
+            'interests.*' => ['integer','exists:interests,id'],
+
         ];
     }
 }

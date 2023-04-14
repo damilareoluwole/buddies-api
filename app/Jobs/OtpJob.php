@@ -15,14 +15,16 @@ class OtpJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $user;
+    protected $phone;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($user, $phone = null)
     {
         $this->user = $user; 
+        $this->phone = $phone; 
     }
 
     /**
@@ -39,7 +41,17 @@ class OtpJob implements ShouldQueue
         $message = "To complete your request, use the OTP: $code";
         
         $sms = new SMS();
-        $sms->users([$this->user]);
+        if($this->phone)
+        {
+            $sms->recipient[] = [
+                "Value"=> (new SMS)->formatNumber($this->phone),
+                "Type"=> 2,
+                "Channel"=> 0
+            ];
+        }else{
+            $sms->users([$this->user]);
+        }
+        
         $sms->message($message);
         $sms->sendSMS();
     }

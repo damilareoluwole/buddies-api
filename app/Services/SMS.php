@@ -8,7 +8,7 @@ Class SMS
 {
     protected $users;
     protected $message;
-    protected $recipient = [];
+    public $recipient = [];
 
     public function users($users)
     {
@@ -24,7 +24,8 @@ Class SMS
     
     public function sendSMS()
     {
-        $this->process();
+        if(! count($this->recipient))
+            $this->process();
         
         $sendSMS = new Pulse();
         $sendSMS->message($this->message);
@@ -48,7 +49,7 @@ Class SMS
         return;
     }
 
-    private function formatNumber($phone)
+    public function formatNumber($phone)
     {
         return self::numberToInternationalFormat($phone);
     }
