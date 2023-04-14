@@ -13,9 +13,8 @@ class InterestController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Here you can',
-            'data' => [
-                'interests' => InterestsResource::collection(Interest::all())
-            ]
+            'data' => InterestsResource::collection(Interest::all())
+            
         ]);
     }
 }
