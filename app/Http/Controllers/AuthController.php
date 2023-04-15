@@ -109,6 +109,17 @@ class AuthController extends Controller
     {
         $data = $request->validated();
         $user = User::byPhone($data['phone'])->first();
+
+        if(! $user)
+            return response()->json(
+                [
+                    'status' => false,
+                    'message' => 'Invalid login details.',
+                    'data' => []
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        
         if(! $user->onboardingPrivacy) {
             return response()->json(
                 [
