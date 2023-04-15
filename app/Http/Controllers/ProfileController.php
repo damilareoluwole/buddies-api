@@ -40,7 +40,7 @@ class ProfileController extends Controller
             'status' => true,
             'message' => 'Profile updated successfully',
             'data' => [
-                'user' => UserResource::make(auth()->user())
+                'user' => UserResource::make(User::find($request->user()->id))
             ]
         ]);
     }
