@@ -56,14 +56,16 @@ class AuthController extends Controller
     protected function recordUserInterests(int $user_id, $interests)
     {
         foreach ($interests as $interest) {
-            UserInterest::updateOrCreate([
-                'user_id' => $user_id, 
+            UserInterest::updateOrCreate(
+                [
+                'user_id' => $user_id,
                 'interest_id' => $interest
-            ], 
-            [
-                'user_id' => $user_id, 
+            ],
+                [
+                'user_id' => $user_id,
                 'interest_id' => $interest
-            ]);
+            ]
+            );
         }
 
         return true;
@@ -83,7 +85,7 @@ class AuthController extends Controller
         $user->save();
 
         return response()->json(['status' => true, 'message' => 'Account activated successfully.', 'data' => ['user' => UserResource::make($user)]]);
-        
+
     }
 
     public function resendOtp(ResendOtpRequest $request)

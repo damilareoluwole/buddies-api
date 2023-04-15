@@ -49,7 +49,7 @@ class RegisterRequest extends FormRequest
                     }
                 }
             ],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'password' => ['required', 'string', 'min:6'],
             'interests' => ['required', 'array'],
             'interests.*' => ['integer','exists:interests,id'],
 
