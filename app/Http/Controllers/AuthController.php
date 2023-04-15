@@ -40,7 +40,7 @@ class AuthController extends Controller
                 'status' => false,
                 'message' => 'Unable to complete your registration request.',
                 'data' => []
-                ]);
+                ], Response::HTTP_BAD_REQUEST);
         }
 
         $this->recordUserInterests($user->id, $request->interests);
