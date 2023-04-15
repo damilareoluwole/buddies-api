@@ -31,6 +31,9 @@ class AuthController extends Controller
                 'phone' => $request->phone,
                 'email' => $request->email,
                 'onboardingInitiate' => 1,
+                'onboardingOtp' => 0,
+                'onboardingPrivacy' => 0,
+                'verified_at' => null,
                 'password' => Hash::make($request->password)
             ]
         );

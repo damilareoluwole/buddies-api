@@ -30,7 +30,7 @@ class RegisterRequest extends FormRequest
                 'regex:/\+?[0-9]{11}/',
                 function ($attribute, $value, $fail) {
                     $user = User::where('phone', $value)
-                                ->whereNotNull('verified_at')
+                                ->where('onboardingPrivacy', true)
                                 ->first();
                     if ($user !== null) {
                         $fail('The ' . $attribute . ' has already been taken.');
@@ -42,7 +42,7 @@ class RegisterRequest extends FormRequest
                 'required',
                 function ($attribute, $value, $fail) {
                     $user = User::where('email', $value)
-                                ->whereNotNull('verified_at')
+                                ->where('onboardingPrivacy', true)
                                 ->first();
                     if ($user !== null) {
                         $fail('The ' . $attribute . ' has already been taken.');

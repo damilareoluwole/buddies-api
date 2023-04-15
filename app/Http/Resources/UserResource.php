@@ -22,6 +22,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'avatar' => ($this->avatar) ? env('APP_URL').Storage::url($this->avatar) : env('APP_URL').'/storage/images/users/default.jpg',
             'dob' => $this->dob,
+            'address' => $this->address,
             'onboardingInitiate' => $this->onboardingInitiate,
             'onboardingOtp' => $this->onboardingOtp,
             'onboardingPrivacy' => $this->onboardingPrivacy,

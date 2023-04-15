@@ -26,7 +26,6 @@ class EditProfileRequest extends FormRequest
         return [
             'phone' => ['required'],
             'email' => ['required'],
-            'dob' => ['required'],
             'address' => ['required'],
             'name' => ['required']
         ];
