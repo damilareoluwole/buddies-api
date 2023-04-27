@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\InterestController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,14 @@ Route::prefix('auth')->group(function () {
         Route::post('/activate', [AuthController::class, 'activate'])->name('register.activate');
         Route::post('/complete', [AuthController::class, 'complete'])->name('register.complete');
         Route::post('/otp/resend', [AuthController::class, 'resendOtp'])->name('otp.resend');
+    });
+
+    Route::prefix('reset')->group(function () {
+        Route::prefix('password')->group(function () {
+            Route::post('/initiate', [ForgotPasswordController::class, 'initiate'])->name('reset.password.initiate');
+            Route::post('/validate', [ForgotPasswordController::class, 'validateOtp'])->name('reset.password.validate');
+            Route::post('/complete', [ForgotPasswordController::class, 'complete'])->name('reset.password.complete');
+        });
     });
 
     Route::post('/login', [AuthController::class, 'login'])->name('jwt-auth.login');
