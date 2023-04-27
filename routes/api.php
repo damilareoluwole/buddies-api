@@ -33,7 +33,6 @@ Route::prefix('auth')->group(function () {
         Route::prefix('password')->group(function () {
             Route::post('/initiate', [ForgotPasswordController::class, 'initiate'])->name('reset.password.initiate');
             Route::post('/validate', [ForgotPasswordController::class, 'validateOtp'])->name('reset.password.validate');
-            Route::post('/complete', [ForgotPasswordController::class, 'complete'])->name('reset.password.complete');
         });
     });
 

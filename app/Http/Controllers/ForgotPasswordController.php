@@ -37,7 +37,8 @@ class ForgotPasswordController extends Controller
     {
         $this->validate($request, [
             'email' => 'required|email:dns|exists:users,email',
-            'otp' => 'required|digits:4'
+            'otp' => 'required|digits:4',
+            'password' => 'required|digits:4|confirmed'
         ]);
 
         $user = User::where('email', $request->email);
@@ -56,33 +57,7 @@ class ForgotPasswordController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
 
-
         $user->otp = null;
-        $user->save();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'OTP validated successfully.'
-        ]);
-    }
-
-    public function complete(Request $request)
-    {
-        $this->validate($request, [
-            'email' => 'required|email:dns|exists:users,email',
-            'password' => 'required|digits:4|confirmed'
-        ]);
-
-        $user = User::where('email', $request->email);
-
-        if(! $user) {
-            return response()->json([
-                'status' => false,
-                'message' => 'User not found.'
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-
         $user->password = Hash::make($request->password);
         $user->save();
 
