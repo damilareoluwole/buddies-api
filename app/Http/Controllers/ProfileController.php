@@ -106,10 +106,7 @@ class ProfileController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Password updated successfully',
-            'data' => [
-                'user' => UserResource::make(auth()->user())
-            ]
+            'message' => 'Password updated successfully'
         ]);
     }
 }

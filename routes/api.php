@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/confirm-password', [ProfileController::class, 'confirmPassword'])->name('user.confirm-password');
 
         Route::prefix('change')->group(function () {
-            Route::post('/password', [ProfileController::class, 'changePassword'])->name('change.changePassword');
+            Route::post('/password', [ProfileController::class, 'changePassword'])->name('change.password');
             Route::prefix('phone')->group(function () {
                 Route::post('/', [ProfileController::class, 'changePhone'])->name('change.phone');
                 Route::post('/complete', [ProfileController::class, 'changePhoneOtp'])->name('change.phone.complete');
