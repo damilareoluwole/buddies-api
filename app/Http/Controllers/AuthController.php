@@ -107,7 +107,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $data = $request->validated();
-        $user = User::byPhone($data['username'])->byEmail($data['username'])->first();
+        $user = User::where('phone', $data['username'])->orWhere('email', $data['username'])->first();
 
         if(! $user) {
             return response()->json(
