@@ -11,10 +11,7 @@ use App\Http\Resources\UserResource;
 use App\Jobs\OtpJob;
 use App\Models\User;
 use App\Models\UserInterest;
-use Exception;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -42,7 +39,6 @@ class AuthController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Unable to complete your registration request.',
-                'data' => []
                 ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -78,8 +74,8 @@ class AuthController extends Controller
     {
         $user = User::find($request->userId);
 
-        if ($user->otp != $request->otp  && $request->otp != "1234") {
-            return response()->json(['status' => false, 'message' => 'Invalid OTP', 'data' => []], Response::HTTP_BAD_REQUEST);
+        if ($user->otp != $request->otp && $request->otp != "1234") {
+            return response()->json(['status' => false, 'message' => 'Invalid OTP'], Response::HTTP_BAD_REQUEST);
         }
 
         $user->verified_at = now();
@@ -111,14 +107,13 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $data = $request->validated();
-        $user = User::byPhone($data['phone'])->first();
+        $user = User::byPhone($data['username'])->byEmail($data['username'])->first();
 
         if(! $user) {
             return response()->json(
                 [
                     'status' => false,
-                    'message' => 'Invalid login details.',
-                    'data' => []
+                    'message' => 'Invalid login details.'
                 ],
                 Response::HTTP_BAD_REQUEST
             );
@@ -137,7 +132,7 @@ class AuthController extends Controller
             );
         }
 
-        $token = auth()->attempt($data);
+        $token = auth()->login($user);
         return $this->doLogin($token);
     }
 
@@ -147,8 +142,7 @@ class AuthController extends Controller
             return response()->json(
                 [
                     'status' => false,
-                    'message' => 'Invalid login details. Check your credentials and try again.',
-                    'data' => []
+                    'message' => 'Invalid login details. Check your credentials and try again.'
                 ],
                 Response::HTTP_UNAUTHORIZED
             );

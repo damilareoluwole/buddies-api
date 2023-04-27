@@ -7,15 +7,12 @@ use App\Http\Requests\ChangeEmailRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\ChangePhoneOtpRequest;
 use App\Http\Requests\ChangePhoneRequest;
-use App\Http\Requests\ConfirmPasswordRequest;
 use App\Http\Requests\EditProfileRequest;
 use App\Jobs\OtpJob;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class ProfileController extends Controller
 {
@@ -41,27 +38,6 @@ class ProfileController extends Controller
             'message' => 'Profile updated successfully',
             'data' => [
                 'user' => UserResource::make(User::find($request->user()->id))
-            ]
-        ]);
-    }
-
-    public function confirmPassword(ConfirmPasswordRequest $request)
-    {
-        $user = $request->user();
-
-        if (! Hash::check($request->validated()['password'], $user->password)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Invalid password',
-                'data' => []
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Password confirmed successfully',
-            'data' => [
-                'user' => UserResource::make($user)
             ]
         ]);
     }
@@ -94,19 +70,9 @@ class ProfileController extends Controller
 
     public function changePhoneOtp(ChangePhoneOtpRequest $request)
     {
-        if (! $this->validateOtp($request)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Invalid OTP',
-                'data' => ['phone' => $request->phone]
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        User::where('id', $request->user()->id)->update(
-            [
-                'phone' => $request->phone
-            ]
-        );
+        $user = $request->user();
+        $user->phone = $request->phone;
+        $user->save();
 
         return response()->json([
             'status' => true,
@@ -119,19 +85,9 @@ class ProfileController extends Controller
 
     public function changeEmailOtp(ChangeEmailOtpRequest $request)
     {
-        if (! $this->validateOtp($request)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Invalid OTP',
-                'data' => ['email' => $request->email]
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        User::where('id', $request->user()->id)->update(
-            [
-                'email' => $request->email
-            ]
-        );
+        $user = $request->user();
+        $user->email = $request->email;
+        $user->save();
 
         return response()->json([
             'status' => true,
@@ -142,27 +98,11 @@ class ProfileController extends Controller
         ]);
     }
 
-    protected function validateOtp($request)
-    {
-        $user = $request->user();
-        if ($user->otp != $request->otp && $request->otp != "1234") {
-            return false;
-        }
-
-        $user->otp = null;
-        $user->save();
-
-        return true;
-
-    }
-
     public function changePassword(ChangePasswordRequest $request)
     {
-        User::where('id', $request->user()->id)->update(
-            [
-                'password' => Hash::make($request->password)
-            ]
-        );
+        $user = $request->user();
+        $user->password = Hash::make($request->password);
+        $user->save();
 
         return response()->json([
             'status' => true,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidatePassword;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ChangeEmailRequest extends FormRequest
@@ -24,6 +25,10 @@ class ChangeEmailRequest extends FormRequest
     public function rules()
     {
         return [
+            'password' => [
+                'required', 
+                new ValidatePassword()
+            ],
             'email' => [
                 'required',
                 'email:dns'

@@ -52,4 +52,8 @@ class User extends Authenticatable implements JWTSubject
     public function scopeByPhone($query, $value){
         return $query->where('phone', $value);
     }
+
+    public function scopeByEmail($query, $value){
+        return $query->where('email', $value);
+    }
 }

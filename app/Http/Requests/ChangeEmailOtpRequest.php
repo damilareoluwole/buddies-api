@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidateOtp;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ChangeEmailOtpRequest extends FormRequest
@@ -30,7 +31,8 @@ class ChangeEmailOtpRequest extends FormRequest
             ],
             'otp' => [
                 'required',
-                'digits:4'
+                'digits:4',
+                new ValidateOtp()
             ]
         ];
     }
