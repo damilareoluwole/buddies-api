@@ -38,7 +38,7 @@ class ForgotPasswordController extends Controller
         $this->validate($request, [
             'email' => 'required|email:dns|exists:users,email',
             'otp' => 'required|digits:4',
-            'password' => 'required|digits:4|confirmed'
+            'password' => 'required|confirmed'
         ]);
 
         $user = User::where('email', $request->email);
